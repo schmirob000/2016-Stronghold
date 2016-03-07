@@ -380,7 +380,7 @@ class App:
             thresh = cv2.THRESH_BINARY_INV
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         (ret,gray) = cv2.threshold(gray, tvals[0],
-                                  200, # value to draw
+                                  255, # value to draw
                                   thresh)
         return gray
 
@@ -535,10 +535,11 @@ class App:
                                         maxLineGap=maxgap)
                 lines = self.robotCnx.NewLines(lines)
             elif cmode == 'contours':
-                gray = self.simpleThreshold(frame)
+                gray = self.simpleThreshold(frame, [75 + self.values[0]*10, 1, 0, 0, 0, 0])
+                frame = cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
                 mode = cv2.RETR_TREE  #values[0]
-                method = cv2.CHAIN_APPROX_SIMPLE  #values[1]
-                off = (values[2], values[3])
+                method = cv2.CHAIN_APPROX_NONE  #values[1]
+                off = (0, 0)
                 contours = cv2.findContours(gray, mode, method, offset=off)
                 # NB: contours may be tuple (contours, hierarchy)
             elif cmode == 'ORB':
@@ -642,7 +643,7 @@ class App:
             maxlevel = self.values[4]
             if len(contours0) <= cindex:
                 self.putNotice("reset contour id")
-                values[3] = -1
+                self.values[3] = -1
                 cindex = -1
             cv2.drawContours(frame, contours0, cindex,
                                 (128,255,255),

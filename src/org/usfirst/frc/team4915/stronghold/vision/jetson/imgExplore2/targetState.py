@@ -69,6 +69,32 @@ class TargetState:
         else:
             return 1 
     
+    def kpCompareByScore(self, kp1, kp2):
+        kp1Score = 0
+        kp2Score = 0
+        #Measure Frequency
+        kp1Frequency = 0
+        kp2Frequency = 0
+        for kp in self.m_kpHistory:
+            if (kp.pt[0]-3 < kp1.pt[0] < kp.pt[0]+3) and \
+            (kp.pt[1]-3 < kp1.pt[1] < kp.pt[1]+3):
+                kp1Frequency += 1
+            if (kp.pt[0]-3 < kp2.pt[0] < kp.pt[0]+3) and \
+            (kp.pt[1]-3 < kp2.pt[1] < kp.pt[1]+3):
+                kp2Frequency += 1
+        #Measure distance from bestOldKp
+        bestOldKp = self.m_kpHistory[0]
+        dist1 = self.calcDist(kp1, bestOldKp)
+        dist2 = self.calcDist(kp2, bestOldKp)
+        kp1Score = kp1Frequency + kp1.size - dist1
+        kp2Score = kp2Frequency + kp2.size - dist2
+
+        if kp1Score > kp2Score:  # sort highest scoring to front of list
+            return -1
+        elif kp1Score == kp2Score:
+            return 0
+        else:
+            return 1 
     def SetFPS(self, fps):
         self.m_visTab.putInt("FPS", fps)
 
@@ -150,6 +176,13 @@ class TargetState:
                 if nearest:
                     self.m_kp = nearest
             elif 1:
+            	#go to best keypoint (several factors)
+            	#(in progress)
+            	self.m_kpHistory.extend(kplist)
+            	self.m_kpHistory = self.m_kpHistory[:50]
+            	kplist.sort(self.kpCompareByScore)
+                self.m_kp = kplist[0]
+            elif 0:
             	#go to most stable keypoint (has issues when moving)
             	self.m_kpHistory.extend(kplist)
             	self.m_kpHistory = self.m_kpHistory[:50]
@@ -167,7 +200,7 @@ class TargetState:
                 sys.stdout.write("\n")
         else:
             self.m_kp = None
-        self.updateVisionTable(self.m_kp)
+        self.updateVisionTableAbsoluteFromRelativeKps(self.m_kp)
         return kplist
 
     def pixelToAngle(self, pt):
@@ -196,3 +229,14 @@ class TargetState:
             self.m_visTab.putInt("TargetY", int(kp.pt[1]))
 
 
+    def updateVisionTableAbsoluteFromRelativeKps(self, kp):
+        self.m_visTab.putInt("RelativeTargetingMode", 0)
+        if not kp:
+            self.m_visTab.putInt("TargetAcquired", 0)
+        else:
+            self.m_visTab.putInt("TargetAcquired", 1)
+            heading = self.m_visTab.getNumber("IMUHeading", 0)
+            theta = self.pixelToAngle(kp.pt)
+            aimerAngle = 0#TODO
+            self.m_visTab.putInt("TargetX", int(heading + theta[0]))
+            self.m_visTab.putInt("TargetY", int(aimerAngle + theta[1]))

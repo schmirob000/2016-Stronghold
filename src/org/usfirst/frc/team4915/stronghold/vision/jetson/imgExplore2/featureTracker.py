@@ -32,7 +32,7 @@ class FSrc:
                     self.vsrc = None
                 else:
                     break
-            if self.vsrc:
+            if self.vsrc and 0:
                 ret1 = self.vsrc.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
                 ret2 = self.vsrc.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
                 w = self.vsrc.get(cv2.CAP_PROP_FRAME_WIDTH)
