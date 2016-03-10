@@ -180,6 +180,7 @@ class TargetState:
             	#(in progress)
             	self.m_kpHistory.extend(kplist)
             	self.m_kpHistory = self.m_kpHistory[:50]
+            	self.m_kpHistory.sort(self.kpcompare)
             	kplist.sort(self.kpCompareByScore)
                 self.m_kp = kplist[0]
             elif 0:
