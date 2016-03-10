@@ -1,15 +1,8 @@
 package org.usfirst.frc.team4915.stronghold.subsystems;
-import java.util.Arrays;
-import java.util.List;
-
-import org.usfirst.frc.team4915.stronghold.Robot;
 import org.usfirst.frc.team4915.stronghold.RobotMap;
 import org.usfirst.frc.team4915.stronghold.commands.DriveTrain.ArcadeDrive;
 
-import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.RobotDrive.MotorType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -82,12 +75,12 @@ public class DriveTrain extends Subsystem {
 
     public void turn(boolean left, double speed) {
         if (left) {
-            RobotMap.leftMasterMotor.set(-speed);
-            RobotMap.rightMasterMotor.set(-speed);
+            RobotMap.leftMasterMotor.set(-0.5*speed);
+            RobotMap.rightMasterMotor.set(-0.5*speed);
         } else {
             System.out.println("Turn right: " + speed);
-            RobotMap.leftMasterMotor.set(speed);
-            RobotMap.rightMasterMotor.set(speed);
+            RobotMap.leftMasterMotor.set(0.5*speed);
+            RobotMap.rightMasterMotor.set(0.5*speed);
         }
     }
 

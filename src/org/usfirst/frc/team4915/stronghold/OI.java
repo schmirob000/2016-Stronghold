@@ -5,13 +5,15 @@ import java.io.InputStream;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import org.usfirst.frc.team4915.stronghold.commands.PortcullisMoveDown;
+import org.usfirst.frc.team4915.stronghold.commands.PortcullisMoveUp;
 import org.usfirst.frc.team4915.stronghold.commands.DriveTrain.GearShiftCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.AutoLaunchCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.IntakeBallCommandGroup;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LaunchBallCommandGroup;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LauncherGoToAngleCommand;
-import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LauncherGoToIntakePositionCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LauncherGoToNeutralPositionCommand;
+import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LauncherGoToTravelPositionCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LightSwitchCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.SpinIntakeWheelsOutCommand;
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.StopWheelsCommand;
@@ -42,6 +44,8 @@ public class OI {
     public static final int DRIVE_STOP_INTAKE_WHEELS_BUTTON_NUMBER = 5;
     public static final int DRIVE_LAUNCHER_JUMP_TO_NEUTRAL_BUTTON_NUMBER = 6;
     public static final int DRIVE_LAUNCHER_JUMP_TO_INTAKE_BUTTON_NUMBER = 4;
+    public static final int PORTCULLIS_BUTTON_NUMBER_UP = 7;
+    public static final int PORTCULLIS_BUTTON_NUMBER_DOWN = 9;
 
     // Button numbers for launching related buttons on the mechanism stick
     public static final int KICK_BALL_BUTTON_NUMBER = 3;
@@ -56,6 +60,7 @@ public class OI {
     public static final int SCALER_REACH_UP_BUTTON_NUMBER = 3;
     public static final int SCALER_REACH_DOWN_BUTTON_NUMBER = 10;
     public static final int SCALER_LIFT_BUTTON_NUMBER = 9;
+
 
     // Create joysticks for driving and aiming the launcher
     public Joystick driveStick;
@@ -86,6 +91,11 @@ public class OI {
     public JoystickButton scalerReachDownButton;
     public JoystickButton scalerLiftButton;
 
+    //PORTCULLIS
+
+    public JoystickButton portcullisButtonUp;
+    public JoystickButton portcullisButtonDown;
+
     // variables for the sendable chooser
     public SendableChooser startingFieldPosition;
     public SendableChooser barrierType;
@@ -112,20 +122,26 @@ public class OI {
         barrierType.addObject("Ramparts", Autonomous.Type.RAMPARTS);
         barrierType.addObject("Rough Terrain", Autonomous.Type.ROUGH_TERRAIN);
         barrierType.addObject("Rock Wall", Autonomous.Type.ROCK_WALL);
+        barrierType.addObject("Portcullis ", Autonomous.Type.PORTCULLIS);
         SmartDashboard.putData("AutoBarrierType", barrierType);
 
         // SendableChooser for the strategy
         strategy = new SendableChooser();
         strategy.addDefault("None", Autonomous.Strat.NONE);
         strategy.addObject("Breach Only", Autonomous.Strat.DRIVE_ACROSS);
-        strategy.addObject("Breach, Vision Shot", Autonomous.Strat.DRIVE_SHOOT_VISION);
+        strategy.addObject("Breach Only Backward", Autonomous.Strat.DRIVE_ACROSS_BACKWARD);
         strategy.addObject("Breach, Blind Shot", Autonomous.Strat.DRIVE_SHOOT_NO_VISION);
+        strategy.addObject("Breach, Vision Shot", Autonomous.Strat.DRIVE_SHOOT_VISION);
         SmartDashboard.putData("AutoStrategy", strategy);
 
         this.driveStick = new Joystick(DRIVE_STICK_PORT);
         this.aimStick = new Joystick(LAUNCHER_STICK_PORT);
 
         // Bind module commands to buttons
+        if (ModuleManager.PORTCULLIS_MODULE_ON){
+            initializeButton (this.portcullisButtonUp, driveStick, PORTCULLIS_BUTTON_NUMBER_UP, new PortcullisMoveUp());
+            initializeButton(this.portcullisButtonDown, driveStick, PORTCULLIS_BUTTON_NUMBER_DOWN, new PortcullisMoveDown());
+        }
         if (ModuleManager.DRIVE_MODULE_ON) {
 
         }
@@ -141,7 +157,7 @@ public class OI {
             initializeButton(this.grabBallButton, driveStick, INTAKE_BALL_BUTTON_NUMBER, new IntakeBallCommandGroup());
             initializeButton(this.launcherJumpToAngleButton, aimStick, 1, new LauncherGoToAngleCommand(10));
             initializeButton(this.spinIntakeWheelsOutButton, aimStick, SPIN_INTAKE_WHEELS_OUT_BUTTON_NUMBER, new SpinIntakeWheelsOutCommand());
-            initializeButton(this.driveLauncherJumpToIntakeButton, driveStick, DRIVE_LAUNCHER_JUMP_TO_INTAKE_BUTTON_NUMBER, new LauncherGoToIntakePositionCommand());
+            initializeButton(this.driveLauncherJumpToIntakeButton, driveStick, DRIVE_LAUNCHER_JUMP_TO_INTAKE_BUTTON_NUMBER, new LauncherGoToTravelPositionCommand());
             initializeButton(this.driveLauncherJumpToNeutralButton, driveStick, DRIVE_LAUNCHER_JUMP_TO_NEUTRAL_BUTTON_NUMBER, new LauncherGoToNeutralPositionCommand());
             initializeButton(this.driveStopIntakeWheelsButton, driveStick, DRIVE_STOP_INTAKE_WHEELS_BUTTON_NUMBER, new StopWheelsCommand());
             initializeButton(this.autoLaunchTestButton, aimStick, AUTO_LAUNCH_TEST_BUTTON_NUMBER, new AutoLaunchCommand());

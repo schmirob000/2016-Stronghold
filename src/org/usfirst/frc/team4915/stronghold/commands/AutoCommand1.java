@@ -1,6 +1,5 @@
 package org.usfirst.frc.team4915.stronghold.commands;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import org.usfirst.frc.team4915.stronghold.ModuleManager;
 import org.usfirst.frc.team4915.stronghold.commands.DriveTrain.ArcadeDrive;
 import org.usfirst.frc.team4915.stronghold.commands.DriveTrain.AutoRotateDegrees;
@@ -9,6 +8,8 @@ import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.AutoLaunchCom
 import org.usfirst.frc.team4915.stronghold.commands.IntakeLauncher.LauncherGoToAngleCommand;
 import org.usfirst.frc.team4915.stronghold.commands.vision.AutoAimControlCommand;
 import org.usfirst.frc.team4915.stronghold.subsystems.Autonomous;
+
+import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class AutoCommand1 extends CommandGroup {
 
@@ -42,7 +43,7 @@ public class AutoCommand1 extends CommandGroup {
 				addParallel(new AimLauncherCommand());
 			}
 			break;
-		case DRIVE_SHOOT_NO_VISION: 
+		case DRIVE_SHOOT_NO_VISION:
 			System.out.println("Starting Move Straight");
 			addSequential(new AutoDriveStraight(getDistance(type)));
 			addSequential(new AutoRotateDegrees(getLeft(position), getDegrees(position)));
@@ -54,6 +55,9 @@ public class AutoCommand1 extends CommandGroup {
 			break;
 		case DRIVE_ACROSS:
 			addSequential(new AutoDriveStraight(getDistance(type)));
+			break;
+        case DRIVE_ACROSS_BACKWARD:
+			addSequential(new AutoDriveStraight(-getDistance(type)));
 			break;
 		default:
 			break;
@@ -83,7 +87,7 @@ public class AutoCommand1 extends CommandGroup {
         }
         return angle;
     }
-    
+
     public static boolean getLeft(Autonomous.Position position) {
         System.out.println(position);
         boolean left = true;
@@ -158,26 +162,29 @@ public class AutoCommand1 extends CommandGroup {
         System.out.println(type);
         switch (type) {
             case LOWBAR:
-                distance = 100; 
+                distance = 130;
                 break;
             case MOAT:
-                distance = 100; 
+                distance = 145;
                 break;
             case RAMPARTS:
-                distance = 100; 
+                distance = 100;
                 break;
             case ROUGH_TERRAIN:
-                distance = 90; 
+                distance = 180;
                 break;
             case ROCK_WALL:
-                distance = 100; 
+                distance = 150;
+                break;
+            case PORTCULLIS:
+                distance = 120;
                 break;
             default:
                 distance = 25;
         }
         return distance;
     }
- 
+
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
         return false;
