@@ -3,6 +3,7 @@ package org.usfirst.frc.team4915.stronghold.commands.DriveTrain;
 import org.usfirst.frc.team4915.stronghold.ModuleManager;
 import org.usfirst.frc.team4915.stronghold.Robot;
 import org.usfirst.frc.team4915.stronghold.RobotMap;
+import org.usfirst.frc.team4915.stronghold.utils.BNO055;
 import org.usfirst.frc.team4915.stronghold.vision.robot.VisionState;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -49,7 +50,7 @@ public class ArcadeDrive extends Command {
         	}
             else {
 	            if (vs.RelativeTargetingMode == 1) {
-	            	vs.updateIMUHeading();
+	            	vs.updateIMUHeading(BNO055.getInstance().getHeading());
 	                if (Math.abs(vs.TargetX) < 3) {
 	                	//System.out.println("target locked. stopping");
 	                    Robot.driveTrain.stop(); // close enough
